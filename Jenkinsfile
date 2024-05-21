@@ -1,14 +1,19 @@
 pipeline {
 	agent {
-		label 'maven'
+		label 'docker-k8s'
 	}
 	stages {
+		stage('checkout') {
+			steps {
+				git branch: 'main', credentialsId: 'zeeshan.nawaz275@gmail.com', url: 'https://github.com/zeeshannawaz/petclinic.git'
+			}
+		}
 		stage('Build') {
 			steps {
-				sh '''
-					sh "./mvnw compile"
-					sh "./mvnw package"
-                                '''
+			    script {
+					    sh "./mvnw compile"
+					    sh "./mvnw package"
+			    }
 			}
 		}
 		stage('Tests') {
@@ -21,6 +26,12 @@ pipeline {
 				jacoco()
 			}
 		}
+		stage('SonarQube Analysis') {
+            //def mvn = tool 'Default Maven';
+            withSonarQubeEnv() {
+            sh "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic"
+    }
+  }
 		stage('PublishArtifact') {
 			steps {
 				archieveArtifacts artifacts: '**/target/*.jar'
