@@ -37,7 +37,7 @@ pipeline {
                     script {
                         //sh "${scannerHome}/bin/sonar-scanner"
                         //sh './mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic'
-                        sh './mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.host.url=http://localhost:30900 -Dsonar.login=sqp_e04528492196546998f65f83c5953d91d60efa29'
+                        sh './mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.host.url=http://sonarqube-service.sonar:9000 -Dsonar.login=sqp_e04528492196546998f65f83c5953d91d60efa29'
                     }
                 }
 		    }
