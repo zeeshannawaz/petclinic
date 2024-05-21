@@ -1,6 +1,9 @@
 pipeline {
 	agent {
-		label 'docker-k8s'
+		label 'maven'
+	}
+	environment {
+	    scannerHome = tool 'SonarQubeScanner2'
 	}
 	stages {
 		stage('checkout') {
@@ -27,11 +30,18 @@ pipeline {
 			}
 		}
 		stage('SonarQube Analysis') {
-            //def mvn = tool 'Default Maven';
-            withSonarQubeEnv() {
-            sh "./mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic"
-    }
-  }
+		    steps{
+                //def mvn = tool 'Default Maven';
+                //def scannerHome = tool 'SonarQubeScanner2'
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        //sh "${scannerHome}/bin/sonar-scanner"
+                        //sh './mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic'
+                        sh './mvnw clean verify sonar:sonar -Dsonar.projectKey=petclinic -Dsonar.host.url=http://localhost:30900 -Dsonar.login=sqp_e04528492196546998f65f83c5953d91d60efa29'
+                    }
+                }
+		    }
+        }
 		stage('PublishArtifact') {
 			steps {
 				archiveArtifacts artifacts: '**/target/*.jar'
